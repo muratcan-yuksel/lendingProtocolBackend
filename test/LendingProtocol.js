@@ -39,7 +39,7 @@ describe("LendingProtocol", function () {
   //we're writing these as functions so that we can reuse them in our test cases
   async function depositETH(user, amount) {
     // const depositAmount = 10;
-    await lendingProtocol.connect(user).depositETH(amount, { value: amount });
+    await lendingProtocol.connect(user).depositETH({ value: amount });
   }
 
   async function repayDebt(user) {

@@ -161,18 +161,14 @@ contract LendingProtocol is ReentrancyGuard {
 
     //main functions start
 
-    function depositETH(uint256 _amount) public payable nonReentrant {
-        require(_amount > 0, "Amount must be greater than 0");
-        require(
-            msg.value == _amount,
-            "Sent ETH amount doesn't match expected amount"
-        );
+    function depositETH() external payable {
+        require(msg.value > 0, "Amount must be greater than 0");
 
         //call function to transfer LPTokens to user
-        transferLPTtoUser(msg.sender, _amount);
+        transferLPTtoUser(msg.sender, msg.value);
 
         //call function to update user's deposit information
-        updateBorrowerInfo(msg.sender, _amount);
+        updateBorrowerInfo(msg.sender, msg.value);
     }
 
     //lenders use this function
