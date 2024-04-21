@@ -140,7 +140,7 @@ contract LendingProtocol is ReentrancyGuard {
         );
 
         //typecasting
-        uint8 remainingDays = uint8(daysPassed % 30);
+        // uint8 remainingDays = uint8(daysPassed % 30);
 
         //check if 30 days has passed
         //via a custom error
@@ -163,6 +163,10 @@ contract LendingProtocol is ReentrancyGuard {
 
     function depositETH(uint256 _amount) public payable nonReentrant {
         require(_amount > 0, "Amount must be greater than 0");
+        require(
+            msg.value == _amount,
+            "Sent ETH amount doesn't match expected amount"
+        );
 
         //call function to transfer LPTokens to user
         transferLPTtoUser(msg.sender, _amount);
