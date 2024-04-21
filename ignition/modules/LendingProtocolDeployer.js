@@ -1,5 +1,5 @@
 const { buildModule } = require("@nomicfoundation/hardhat-ignition/modules");
-const lpTokenAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
+const lpTokenAddress = "0x8615D77790F8A14E2dC996ba1eD7F040cE6A1d2B";
 
 module.exports = buildModule("LendingProtocol", (m) => {
   const lpToken = m.getParameter("lpToken", lpTokenAddress);

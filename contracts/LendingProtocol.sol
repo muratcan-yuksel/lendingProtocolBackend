@@ -39,7 +39,7 @@ contract LendingProtocol is ReentrancyGuard {
 
     //structs
     struct BorrowerInfo {
-        uint256 ehtDeposited;
+        uint256 ethDeposited;
         uint256 collateralValue; //USD value of deposited ETH at the time of deposit.
         uint256 depositTime;
     }
@@ -67,7 +67,6 @@ contract LendingProtocol is ReentrancyGuard {
     function getTotalEthLocked() public view returns (uint256) {
         // Recalculate totalEthLocked every time this function is called
         uint256 ethBalance = address(this).balance;
-        console.log("ETH balance of the contract:", ethBalance);
         return ethBalance;
     }
 
@@ -92,14 +91,10 @@ contract LendingProtocol is ReentrancyGuard {
         //But here we'll use a mock value
 
         // Calculate USD value of deposited ETH (ETH price being 3k)
-        // console.log("ETH amount:", _ethAmount);
         uint256 depositValueUSD = _ethAmount * ethPrice;
         //only 80% of the deposited ETH can be used by the user
-        console.log("Deposit value in USD:", depositValueUSD);
         //lptAmount returns 0 if I don't use safemath
         uint256 lptAmount = (depositValueUSD * collateralRatio) / 100;
-        console.log("LPTokens to be minted:", lptAmount);
-        console.log("collateral ratio:", collateralRatio);
         return lptAmount;
     }
 
@@ -110,7 +105,6 @@ contract LendingProtocol is ReentrancyGuard {
         //1 LPT= 1 USD
         //1 ETH = 3000 USD
         uint256 lptAmount = (calculateLPTokensToUser(_ethAmountDeposited));
-        console.log("LPToken amount to be minted:", lptAmount);
 
         // send the user LPTokens using ERC20's transfer function
         lpToken.transfer(_user, lptAmount);
@@ -118,7 +112,7 @@ contract LendingProtocol is ReentrancyGuard {
 
     //change this function as it only works for depositing but not withdrawing
     function updateBorrowerInfo(address _user, uint256 _amount) internal {
-        borrowers[_user].ehtDeposited += _amount;
+        borrowers[_user].ethDeposited += _amount;
         borrowers[_user].collateralValue += (calculateLPTokensToUser(_amount));
         borrowers[_user].depositTime = block.timestamp;
     }
@@ -135,7 +129,6 @@ contract LendingProtocol is ReentrancyGuard {
         uint256 secondsPassed = timestamp2 - timestamp1;
         uint256 daysPassed = secondsPassed / 86400; // Number of seconds in a day
 
-        console.log("Number of days passed:", daysPassed);
         return daysPassed;
     }
 
@@ -163,11 +156,6 @@ contract LendingProtocol is ReentrancyGuard {
             (interestRate) *
             monthsPassed) / 100;
 
-        console.log("amount lent:", lenders[msg.sender].amountLent);
-        console.log("Interest earned:", interest);
-        console.log("Months passed:", monthsPassed);
-        console.log("remaining days:", remainingDays);
-
         return interest;
     }
 
@@ -175,7 +163,6 @@ contract LendingProtocol is ReentrancyGuard {
 
     function depositETH(uint256 _amount) public payable nonReentrant {
         require(_amount > 0, "Amount must be greater than 0");
-        // console.log("deposited amount", _amount);
 
         //call function to transfer LPTokens to user
         transferLPTtoUser(msg.sender, _amount);
@@ -198,7 +185,6 @@ contract LendingProtocol is ReentrancyGuard {
 
         // Emit an event after successful transfer
         emit DepositedLPT(msg.sender, _lptAmount);
-        console.log(block.timestamp);
     }
 
     function withdrawInterest() public {
@@ -237,13 +223,13 @@ contract LendingProtocol is ReentrancyGuard {
         borrowers[msg.sender].collateralValue = 0;
 
         //send locked ETH to the user
-        payable(msg.sender).transfer(borrowers[msg.sender].ehtDeposited);
+        payable(msg.sender).transfer(borrowers[msg.sender].ethDeposited);
 
         //update locked ETH
-        borrowers[msg.sender].ehtDeposited = 0;
+        borrowers[msg.sender].ethDeposited = 0;
 
         //emit event
-        emit RepaidETH(msg.sender, borrowers[msg.sender].ehtDeposited);
+        emit RepaidETH(msg.sender, borrowers[msg.sender].ethDeposited);
     }
 
     //should also repay the interest to the user

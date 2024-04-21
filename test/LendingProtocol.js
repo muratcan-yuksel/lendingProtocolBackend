@@ -94,11 +94,14 @@ describe("LendingProtocol", function () {
 
   it("user should be able to deposit ETH to the protocol and the ETH pool in the protocol increases", async function () {
     const initialEthInPool = await lendingProtocol.getTotalEthLocked(); // Get initial ETH in pool
+    console.log("initial eth in pool" + initialEthInPool);
+    //amount of eth user has
 
     const depositAmount = 10;
     await depositETH(user1, depositAmount); // Call the depositETH function with user1 and deposit amount
 
     const ethInPool = await lendingProtocol.getTotalEthLocked();
+    console.log("final eth in pool" + ethInPool);
 
     // Convert ethInPool to BigInt
     const initialEthInPoolBigInt = BigInt(initialEthInPool);
@@ -142,7 +145,7 @@ describe("LendingProtocol", function () {
 
     //considering 1 eth is 3000 LPT and the collateral ratio is 80
     const borrower = await lendingProtocol.getBorrowerInfo(user1.address);
-    expect(borrower.ehtDeposited).to.equal(1);
+    expect(borrower.ethDeposited).to.equal(1);
     expect(borrower.collateralValue).to.equal(2400);
   });
 
@@ -252,7 +255,7 @@ describe("LendingProtocol", function () {
     await ethers.provider.send("evm_mine", []);
     //check borrower's info
     const borrower = await lendingProtocol.getBorrowerInfo(user1.address);
-    expect(borrower.ehtDeposited).to.equal(1);
+    expect(borrower.ethDeposited).to.equal(1);
     expect(borrower.collateralValue).to.equal(2400);
     //allow lendingprotocol contract to spend the depositamount of lptokens for user1
     await token
@@ -265,7 +268,7 @@ describe("LendingProtocol", function () {
     await ethers.provider.send("evm_mine", []);
     //check borrower's info
     const finalBorrower = await lendingProtocol.getBorrowerInfo(user1.address);
-    expect(finalBorrower.ehtDeposited).to.equal(0);
+    expect(finalBorrower.ethDeposited).to.equal(0);
     expect(finalBorrower.collateralValue).to.equal(0);
   });
   //repayDebt tests ends
